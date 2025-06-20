@@ -78,7 +78,12 @@
   .weak { color: #f44336; }
   .medium { color: #ff9800; }
   .strong { color: #4caf50; }
-  #commonWarning { color: #f44336; font-weight: bold; margin-top: 0.5rem; }
+  #errorMessage {
+    color: #f44336;
+    font-weight: bold;
+    margin-top: 1rem;
+    display: none;
+  }
 </style>
 </head>
 <body>
@@ -112,6 +117,8 @@
 
 <button id="generateBtn">Generar contraseña</button>
 
+<div id="errorMessage"></div>
+
 <label>Contraseña generada:</label>
 <input type="text" id="password" readonly />
 <button id="copyBtn">Copiar</button>
@@ -126,10 +133,9 @@
 <label>SHA-256 (hash):</label>
 <textarea id="hash" rows="3" readonly></textarea>
 
-<div id="commonWarning"></div>
-
 <script src="app.js"></script>
 </body>
 </html>
+
 
 
