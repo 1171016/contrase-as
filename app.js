@@ -1,10 +1,3 @@
-// Lista de contraseñas comunes
-const commonPasswords = [
-  "123456", "password", "qwerty", "abc123",
-  "123456789", "password123", "letmein",
-  "12345678", "123123"
-];
-
 // Generar contraseña
 function generatePassword(length, options, name) {
   let pool = "";
@@ -51,11 +44,6 @@ async function sha256(message) {
     .join('');
 }
 
-// Comprobar si es contraseña común
-function isCommonPassword(password) {
-  return commonPasswords.includes(password);
-}
-
 // Eventos
 document.getElementById('generateBtn').addEventListener('click', async () => {
   const length = parseInt(document.getElementById('length').value) || 12;
@@ -66,6 +54,16 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
     numbers: document.getElementById('useNumbers').checked,
     symbols: document.getElementById('useSymbols').checked
   };
+
+  // Validar que al menos una casilla esté marcada
+  if (!options.lower && !options.upper && !options.numbers && !options.symbols) {
+    const errorMessage = document.getElementById('errorMessage');
+    errorMessage.innerText = "⚠️ Debes seleccionar al menos una opción para generar la contraseña.";
+    return;
+  } else {
+    document.getElementById('errorMessage').innerText = "";
+  }
+
   const pwd = generatePassword(length, options, name);
   document.getElementById('password').value = pwd;
 
@@ -78,20 +76,15 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
   security.className = "security " + level.className;
 
   document.getElementById('hash').value = await sha256(pwd);
-
-  const commonWarning = document.getElementById('commonWarning');
-  commonWarning.innerText = isCommonPassword(pwd)
-    ? "⚠️ Esta es una contraseña muy común y fácil de adivinar."
-    : "";
 });
 
 document.getElementById('copyBtn').addEventListener('click', async () => {
   const pwd = document.getElementById('password').value;
+  if (!pwd) return; // No copiar si no hay contraseña
   await navigator.clipboard.writeText(pwd);
   const copyMessage = document.getElementById('copyMessage');
   copyMessage.style.display = "block";
   setTimeout(() => copyMessage.style.display = "none", 2000);
 });
-
 
 
