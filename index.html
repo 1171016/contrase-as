@@ -2,20 +2,33 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<title>Generador Avanzado de Contraseñas</title>
+<title>Generador Avanzado</title>
 <style>
     body { font-family: Arial, sans-serif; background: #1a1a1a; color: #eee; padding: 2rem; max-width: 500px; margin: auto; }
     h1 { text-align: center; color: #4caf50; }
     label { display: block; margin-top: 1rem; }
-    input, textarea, select, button { width: 100%; padding: 0.5rem; border-radius: 4px; border: none; }
-    button { background: #4caf50; color: white; cursor: pointer; margin-top: 1rem; }
+    input, textarea, button { width: 100%; padding: 0.5rem; border: none; border-radius: 4px; margin-top: 0.5rem; }
+    input, textarea { background: #333; color: #eee; }
+    button { cursor: pointer; background: #4caf50; color: white; }
+    button:hover { background: #45a049; }
     .options { display: flex; gap: 1rem; margin-top: 1rem; }
-    .options label { flex: 1; }
+    .options label { flex: 1; font-size: 0.9rem; }
     .security { margin-top: 1rem; font-weight: bold; }
     .weak { color: #f44336; }
     .medium { color: #ff9800; }
     .strong { color: #4caf50; }
-    input[type="checkbox"] { width: auto; margin-right: 0.5rem; }
+    #copyMessage { color: #4caf50; font-weight: bold; margin-top: 0.5rem; display: none; }
+    #copyBtn {
+      background: #2196f3;
+      color: white;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: auto;
+      margin-top: 0.5rem;
+    }
+    #copyBtn:hover { background: #1976d2; }
 </style>
 </head>
 <body>
@@ -40,10 +53,12 @@
 <button id="generateBtn">Generar contraseña</button>
 
 <label>Contraseña generada:</label>
-<input type="text" id="password" readonly>
+<input type="text" id="password" readonly />
+<button id="copyBtn">Copiar</button>
+<div id="copyMessage">¡Copiado con éxito!</div>
 
 <label>Entropía:</label>
-<input type="text" id="entropy" readonly>
+<input type="text" id="entropy" readonly />
 
 <label>Nivel de seguridad:</label>
 <div id="security" class="security"></div>
@@ -54,3 +69,4 @@
 <script src="app.js"></script>
 </body>
 </html>
+
