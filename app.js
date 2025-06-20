@@ -1,73 +1,98 @@
-function generatePassword(length, name, useLower, useUpper, useNumbers, useSymbols) {
-  let pool = '';
-  if (useLower) pool += "abcdefghijklmnopqrstuvwxyz";
-  if (useUpper) pool += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  if (useNumbers) pool += "0123456789";
-  if (useSymbols) pool += "!@#$%^&*()-_=+[]{}|;:',.<>?/`~";
-  if (name && name.length > 0) pool += name.replace(/\s+/g, '').toLowerCase();
+// Conjunto de contraseñas comunes
+const commonPasswords = [
+  "123456", "password", "qwerty", "abc123",
+  "123456789", "password123", "letmein",
+  "12345678", "123123"
+];
 
-  if (pool.length === 0) return '';
-  let password = '';
+// Generar contraseña
+function generatePassword(length, options, name) {
+  let pool = "";
+  if (options.lower) pool += "abcdefghijklmnopqrstuvwxyz";
+  if (options.upper) pool += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  if (options.numbers) pool += "0123456789";
+  if (options.symbols) pool += "!@#$%^&*()-_=+<>?";
+
+  // Incluye algunas letras del nombre si hay
+  let extraLetters = "";
+  if (name) extraLetters = name.replace(/[^A-Za-z]/g, "").slice(0, 3);
+
+  let pwd = "";
   for (let i = 0; i < length; i++) {
-    password += pool.charAt(Math.floor(Math.random() * pool.length));
+    const source = i < extraLetters.length ? extraLetters : pool;
+    pwd += source.charAt(Math.floor(Math.random() * source.length));
   }
-  return password;
+  return pwd;
 }
 
-function calculateEntropy(password, useLower, useUpper, useNumbers, useSymbols) {
+// Calcular entropía
+function calculateEntropy(password, options) {
   let pool = 0;
-  if (useLower) pool += 26;
-  if (useUpper) pool += 26;
-  if (useNumbers) pool += 10;
-  if (useSymbols) pool += 32;
+  if (options.lower) pool += 26;
+  if (options.upper) pool += 26;
+  if (options.numbers) pool += 10;
+  if (options.symbols) pool += 32;
   return Math.log2(pool) * password.length;
 }
 
+// Nivel de seguridad
 function getSecurityLevel(entropy) {
-  if (entropy < 40) return { level: "Débil", class: "weak" };
-  if (entropy < 60) return { level: "Media", class: "medium" };
-  return { level: "Fuerte", class: "strong" };
+  if (entropy < 40) return { level: "Débil", className: "weak" };
+  if (entropy < 60) return { level: "Media", className: "medium" };
+  return { level: "Fuerte", className: "strong" };
 }
 
+// SHA-256 hash
 async function sha256(message) {
-  const msgBuffer = new TextEncoder().encode(message);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-  return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+  const encoder = new TextEncoder();
+  const data = encoder.encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hashBuffer))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+// Comprobación contra contraseñas comunes
+function isCommonPassword(password) {
+  return commonPasswords.includes(password);
 }
 
 // Eventos
-document.getElementById("generateBtn").addEventListener("click", async () => {
-  const length = parseInt(document.getElementById("length").value);
-  const name = document.getElementById("name").value;
-  const useLower = document.getElementById("useLower").checked;
-  const useUpper = document.getElementById("useUpper").checked;
-  const useNumbers = document.getElementById("useNumbers").checked;
-  const useSymbols = document.getElementById("useSymbols").checked;
+document.getElementById('generateBtn').addEventListener('click', async () => {
+  const length = parseInt(document.getElementById('length').value) || 12;
+  const name = document.getElementById('name').value;
+  const options = {
+    lower: document.getElementById('useLower').checked,
+    upper: document.getElementById('useUpper').checked,
+    numbers: document.getElementById('useNumbers').checked,
+    symbols: document.getElementById('useSymbols').checked
+  };
+  const pwd = generatePassword(length, options, name);
+  document.getElementById('password').value = pwd;
 
-  const pwd = generatePassword(length, name, useLower, useUpper, useNumbers, useSymbols);
-  document.getElementById("password").value = pwd;
+  const entropy = calculateEntropy(pwd, options);
+  document.getElementById('entropy').value = entropy.toFixed(2) + " bits";
 
-  const entropy = calculateEntropy(pwd, useLower, useUpper, useNumbers, useSymbols);
-  document.getElementById("entropy").value = entropy.toFixed(2) + " bits";
+  const level = getSecurityLevel(entropy);
+  const security = document.getElementById('security');
+  security.innerText = level.level;
+  security.className = "security " + level.className;
 
-  const security = getSecurityLevel(entropy);
-  const securityDiv = document.getElementById("security");
-  securityDiv.textContent = security.level;
-  securityDiv.className = `security ${security.class}`;
+  document.getElementById('hash').value = await sha256(pwd);
 
-  const hash = await sha256(pwd);
-  document.getElementById("hash").value = hash;
+  // Mostrar advertencia si es común
+  const commonWarning = document.getElementById('commonWarning');
+  commonWarning.innerText = isCommonPassword(pwd)
+    ? "⚠️ Esta es una contraseña muy común y fácil de adivinar."
+    : "";
 });
 
-// Copiar al portapapeles
-document.getElementById("copyBtn").addEventListener("click", async () => {
-  const pwd = document.getElementById("password").value;
-  if (!pwd) return;
-
+document.getElementById('copyBtn').addEventListener('click', async () => {
+  const pwd = document.getElementById('password').value;
   await navigator.clipboard.writeText(pwd);
-  const message = document.getElementById("copyMessage");
-  message.style.display = "block";
-  setTimeout(() => message.style.display = "none", 2000);
+  document.getElementById('copyMessage').style.display = "block";
+  setTimeout(() => document.getElementById('copyMessage').style.display = "none", 2000);
 });
+
 
 
