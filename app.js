@@ -1,4 +1,4 @@
-// Conjunto de contraseñas comunes
+// Lista de contraseñas comunes
 const commonPasswords = [
   "123456", "password", "qwerty", "abc123",
   "123456789", "password123", "letmein",
@@ -13,7 +13,6 @@ function generatePassword(length, options, name) {
   if (options.numbers) pool += "0123456789";
   if (options.symbols) pool += "!@#$%^&*()-_=+<>?";
 
-  // Incluye algunas letras del nombre si hay
   let extraLetters = "";
   if (name) extraLetters = name.replace(/[^A-Za-z]/g, "").slice(0, 3);
 
@@ -52,7 +51,7 @@ async function sha256(message) {
     .join('');
 }
 
-// Comprobación contra contraseñas comunes
+// Comprobar si es contraseña común
 function isCommonPassword(password) {
   return commonPasswords.includes(password);
 }
@@ -80,7 +79,6 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
 
   document.getElementById('hash').value = await sha256(pwd);
 
-  // Mostrar advertencia si es común
   const commonWarning = document.getElementById('commonWarning');
   commonWarning.innerText = isCommonPassword(pwd)
     ? "⚠️ Esta es una contraseña muy común y fácil de adivinar."
@@ -90,8 +88,9 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
 document.getElementById('copyBtn').addEventListener('click', async () => {
   const pwd = document.getElementById('password').value;
   await navigator.clipboard.writeText(pwd);
-  document.getElementById('copyMessage').style.display = "block";
-  setTimeout(() => document.getElementById('copyMessage').style.display = "none", 2000);
+  const copyMessage = document.getElementById('copyMessage');
+  copyMessage.style.display = "block";
+  setTimeout(() => copyMessage.style.display = "none", 2000);
 });
 
 
