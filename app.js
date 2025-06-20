@@ -55,13 +55,18 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
     symbols: document.getElementById('useSymbols').checked
   };
 
-  // Validar que al menos una casilla esté marcada
+  const errorMessage = document.getElementById('errorMessage');
+
   if (!options.lower && !options.upper && !options.numbers && !options.symbols) {
-    const errorMessage = document.getElementById('errorMessage');
     errorMessage.innerText = "⚠️ Debes seleccionar al menos una opción para generar la contraseña.";
+    // Limpiar valores para evitar confusión
+    document.getElementById('password').value = "";
+    document.getElementById('entropy').value = "";
+    document.getElementById('security').innerText = "";
+    document.getElementById('hash').value = "";
     return;
   } else {
-    document.getElementById('errorMessage').innerText = "";
+    errorMessage.innerText = "";
   }
 
   const pwd = generatePassword(length, options, name);
@@ -86,5 +91,6 @@ document.getElementById('copyBtn').addEventListener('click', async () => {
   copyMessage.style.display = "block";
   setTimeout(() => copyMessage.style.display = "none", 2000);
 });
+
 
 
