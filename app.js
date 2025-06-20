@@ -4,15 +4,9 @@ function generatePassword(length, name, useLower, useUpper, useNumbers, useSymbo
   if (useUpper) pool += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   if (useNumbers) pool += "0123456789";
   if (useSymbols) pool += "!@#$%^&*()-_=+[]{}|;:',.<>?/`~";
-
-  // Añadir letras del nombre opcionalmente
-  if (name && name.length > 0) {
-    const extraChars = name.replace(/\s+/g, '').toLowerCase();
-    pool += extraChars;
-  }
+  if (name && name.length > 0) pool += name.replace(/\s+/g, '').toLowerCase();
 
   if (pool.length === 0) return '';
-
   let password = '';
   for (let i = 0; i < length; i++) {
     password += pool.charAt(Math.floor(Math.random() * pool.length));
@@ -64,3 +58,15 @@ document.getElementById("generateBtn").addEventListener("click", async () => {
   const hash = await sha256(pwd);
   document.getElementById("hash").value = hash;
 });
+
+// Copiar al portapapeles
+document.getElementById("copyBtn").addEventListener("click", async () => {
+  const pwd = document.getElementById("password").value;
+  if (!pwd) return;
+
+  await navigator.clipboard.writeText(pwd);
+  const message = document.getElementById("copyMessage");
+  message.style.display = "block";
+  setTimeout(() => message.style.display = "none", 2000);
+});
+
