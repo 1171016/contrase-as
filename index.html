@@ -2,10 +2,84 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<title>Prueba Mensaje de Error</title>
+<title>Generador Avanzado</title>
 <style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #1a1a1a;
+    color: #eee;
+    padding: 2rem;
+    max-width: 500px;
+    margin: auto;
+  }
+  h1 {
+    text-align: center;
+    color: #4caf50;
+  }
+  label {
+    display: block;
+    margin-top: 1rem;
+  }
+  input, textarea, button {
+    width: 100%;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+  }
+  input, textarea {
+    background: #333;
+    color: #eee;
+  }
+  button {
+    cursor: pointer;
+    background: #4caf50;
+    color: white;
+  }
+  button:hover {
+    background: #45a049;
+  }
+  .options {
+    margin-top: 1rem;
+  }
+  .checkbox-option {
+    background: #222;
+    padding: 0.5rem;
+    border-radius: 4px;
+    color: #eee;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  #copyMessage {
+    color: #4caf50;
+    font-weight: bold;
+    margin-top: 0.5rem;
+    display: none;
+  }
+  #copyBtn {
+    background: #2196f3;
+    color: white;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: auto;
+    margin-top: 0.5rem;
+  }
+  #copyBtn:hover {
+    background: #1976d2;
+  }
+  .security {
+    margin-top: 1rem;
+    font-weight: bold;
+  }
+  .weak { color: #f44336; }
+  .medium { color: #ff9800; }
+  .strong { color: #4caf50; }
   #errorMessage {
-    color: red;
+    color: #f44336;
     font-weight: bold;
     margin-top: 1rem;
     min-height: 1.5em;
@@ -14,39 +88,52 @@
 </head>
 <body>
 
-<h2>Test Generador Contraseña</h2>
+<h1>Generador Avanzado</h1>
 
-<div>
-  <input type="checkbox" id="useLower" checked> <label for="useLower">Minúsculas</label><br>
-  <input type="checkbox" id="useUpper" checked> <label for="useUpper">Mayúsculas</label><br>
-  <input type="checkbox" id="useNumbers" checked> <label for="useNumbers">Números</label><br>
-  <input type="checkbox" id="useSymbols" checked> <label for="useSymbols">Símbolos</label><br>
+<label for="length">Longitud:</label>
+<input type="number" id="length" min="4" max="64" value="12">
+
+<label for="name">Nombre (opcional):</label>
+<input type="text" id="name" placeholder="Introduce tu nombre para incluir letras">
+
+<div class="options">
+  <div class="checkbox-option">
+    <input type="checkbox" id="useLower" checked>
+    <label for="useLower">Minúsculas</label>
+  </div>
+  <div class="checkbox-option">
+    <input type="checkbox" id="useUpper" checked>
+    <label for="useUpper">Mayúsculas</label>
+  </div>
+  <div class="checkbox-option">
+    <input type="checkbox" id="useNumbers" checked>
+    <label for="useNumbers">Números</label>
+  </div>
+  <div class="checkbox-option">
+    <input type="checkbox" id="useSymbols" checked>
+    <label for="useSymbols">Símbolos</label>
+  </div>
 </div>
 
 <button id="generateBtn">Generar contraseña</button>
 
 <div id="errorMessage"></div>
 
-<script>
-  document.getElementById('generateBtn').addEventListener('click', () => {
-    const options = {
-      lower: document.getElementById('useLower').checked,
-      upper: document.getElementById('useUpper').checked,
-      numbers: document.getElementById('useNumbers').checked,
-      symbols: document.getElementById('useSymbols').checked
-    };
+<label>Contraseña generada:</label>
+<input type="text" id="password" readonly />
+<button id="copyBtn">Copiar</button>
+<div id="copyMessage">¡Copiado con éxito!</div>
 
-    const errorMessage = document.getElementById('errorMessage');
+<label>Entropía:</label>
+<input type="text" id="entropy" readonly />
 
-    if (!options.lower && !options.upper && !options.numbers && !options.symbols) {
-      errorMessage.innerText = "⚠️ Debes seleccionar al menos una opción para generar la contraseña.";
-    } else {
-      errorMessage.innerText = "";
-      alert('¡Opciones correctas! Aquí iría la generación de contraseña.');
-    }
-  });
-</script>
+<label>Nivel de seguridad:</label>
+<div id="security" class="security"></div>
 
+<label>SHA-256 (hash):</label>
+<textarea id="hash" rows="3" readonly></textarea>
+
+<script src="app.js"></script>
 </body>
 </html>
 
